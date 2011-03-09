@@ -18,7 +18,12 @@ namespace DatabaseScriptRunner
                                       orderby changes.MajorVersion descending
                                       select changes).First<SchemaChange>();
 
-            string filePath = args[2];// @"C:\Users\cbreish\projects\raf\Database\";
+            string filePath = args[2];
+
+            if (filePath.Substring(filePath.Length-1) != @"\")
+            {
+                filePath += @"\";
+            }
             string connectionString = string.Format("Data Source={0};Initial Catalog={1};Integrated Security=True;MultipleActiveResultSets=True", args[0], args[1]);
             
 
@@ -34,7 +39,7 @@ namespace DatabaseScriptRunner
 
                     DirectoryInfo schemaDir = new DirectoryInfo(filePath + "schema");
 
-                    foreach (FileInfo script in schemaDir.GetFiles()
+                    foreach (FileInfo script in schemaDir.GetFiles("*.sql")
                                 .Where(x => Int32.Parse(x.Name.Split('.')[0]) == latestChange.MajorVersion
                                 && Int32.Parse(x.Name.Split('.')[1]) > latestChange.MinorVersion))
                     {
@@ -74,7 +79,7 @@ namespace DatabaseScriptRunner
         private static void AddProcs(SqlCommand cmd, string filePath)
         {
             DirectoryInfo procDir = new DirectoryInfo(filePath + "StoredProcedures");
-            RunScripts(cmd, procDir.GetFiles());
+            RunScripts(cmd, procDir.GetFiles("*.sql"));
         }
 
         private static void RemoveViews(SqlCommand cmd)
@@ -89,7 +94,7 @@ namespace DatabaseScriptRunner
         private static void AddViews(SqlCommand cmd, string filePath)
         {
             DirectoryInfo viewDir = new DirectoryInfo(filePath + "Views");
-            RunScripts(cmd, viewDir.GetFiles());
+            RunScripts(cmd, viewDir.GetFiles("*.sql"));
         }
 
         private static void RemoveFuncs(SqlCommand cmd)
@@ -105,7 +110,7 @@ namespace DatabaseScriptRunner
         private static void AddFuncs(SqlCommand cmd, string filePath)
         {
             DirectoryInfo funcDir = new DirectoryInfo(filePath + "Functions");
-            RunScripts(cmd, funcDir.GetFiles());
+            RunScripts(cmd, funcDir.GetFiles("*.sql"));
         }
 
         private static void RunScripts(SqlCommand cmd, FileInfo[] scripts)

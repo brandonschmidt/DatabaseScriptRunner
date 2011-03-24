@@ -57,12 +57,12 @@ namespace DatabaseScriptRunner
                         db.SaveChanges();
                     }
 
+                    RemoveFuncs(cmd);
+                    AddFuncs(cmd, filePath);
                     RemoveProcs(cmd);
                     AddProcs(cmd, filePath);
                     RemoveViews(cmd);
                     AddViews(cmd, filePath);
-                    RemoveFuncs(cmd);
-                    AddFuncs(cmd, filePath);
                 }
             }
         }
@@ -117,6 +117,7 @@ namespace DatabaseScriptRunner
         {
             foreach (FileInfo script in scripts)
             {
+                Console.WriteLine("Running " + script.Name);
                 cmd.CommandText = script.OpenText().ReadToEnd();
                 cmd.CommandText = Regex.Replace(cmd.CommandText, "(?I)\\bGO\\b", String.Empty);
 

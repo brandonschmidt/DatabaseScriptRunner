@@ -13,20 +13,25 @@ namespace DatabaseScriptRunner
     {
         static void Main(string[] args)
         {
-            DatabaseEntities db = new DatabaseEntities();
+            string connectionString = string.Format("Data Source={0};Initial Catalog={1};Integrated Security=True;MultipleActiveResultSets=True", args[0], args[1]);
+            string efConnectionString = string.Format("metadata=res://*/Database.csdl|res://*/Database.ssdl|res://*/Database.msl;provider=System.Data.SqlClient;provider connection string=\"{0}\"", connectionString);
+            DatabaseEntities db = new DatabaseEntities(efConnectionString);
+            
             SchemaChange latestChange = (from changes in db.SchemaChanges
                                       orderby changes.MajorVersion descending
-                                      select changes).First<SchemaChange>();
+                                      select changes).FirstOrDefault<SchemaChange>();
 
+            if (latestChange == null)
+            {
+                throw new ApplicationException("The SchemaChange table in your destination database is empty.  It must contain at least 1 baseline record.");
+            }
+            
             string filePath = args[2];
-
             if (filePath.Substring(filePath.Length-1) != @"\")
             {
                 filePath += @"\";
             }
-            string connectionString = string.Format("Data Source={0};Initial Catalog={1};Integrated Security=True;MultipleActiveResultSets=True", args[0], args[1]);
             
-
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {

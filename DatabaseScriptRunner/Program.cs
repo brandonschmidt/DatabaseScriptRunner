@@ -48,11 +48,15 @@ namespace DatabaseScriptRunner
                                 .Where(x => Int32.Parse(x.Name.Split('.')[0]) == latestChange.MajorVersion
                                 && Int32.Parse(x.Name.Split('.')[1]) > latestChange.MinorVersion))
                     {
-                        cmd.CommandText = script.OpenText().ReadToEnd();
-                        cmd.CommandText = Regex.Replace(cmd.CommandText, @"(?I)\bGO\b", String.Empty);
+                        string command = script.OpenText().ReadToEnd();
+                        command = Regex.Replace(command, @"(?I)\bGO\b", "\0");
 
-                        cmd.ExecuteNonQuery();
-
+                        foreach (string commandFragment in command.Split('\0'))
+                        {
+                            cmd.CommandText = commandFragment;
+                            cmd.ExecuteNonQuery();
+                        }
+                        
                         SchemaChange newChange = new SchemaChange();
                         newChange.MajorVersion = int.Parse(script.Name.Split('.')[0]);
                         newChange.MinorVersion = int.Parse(script.Name.Split('.')[1]);
@@ -123,10 +127,15 @@ namespace DatabaseScriptRunner
             foreach (FileInfo script in scripts)
             {
                 Console.WriteLine("Running " + script.Name);
-                cmd.CommandText = script.OpenText().ReadToEnd();
-                cmd.CommandText = Regex.Replace(cmd.CommandText, "(?I)\\bGO\\b", String.Empty);
 
-                cmd.ExecuteNonQuery();
+                string command = script.OpenText().ReadToEnd();
+                command = Regex.Replace(command, @"(?I)\bGO\b", "\0");
+
+                foreach (string commandFragment in command.Split('\0'))
+                {
+                    cmd.CommandText = commandFragment;
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
     }

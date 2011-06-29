@@ -9,8 +9,8 @@ DatabaseScriptRunner [DatabaseServer] [DatabaseName] [RootPathToScripts]
 
 ### More Information
 
-For more information, check [the wiki][https://github.com/CognisIT/DatabaseScriptRunner/wiki].
+For more information, check [the wiki](https://github.com/CognisIT/DatabaseScriptRunner/wiki).
 
 ### License
 
-DatabaseScriptRunner is licensed under the [MIT License][https://github.com/CognisIT/DatabaseScriptRunner/blob/master/license].
+DatabaseScriptRunner is licensed under the [MIT License](https://github.com/CognisIT/DatabaseScriptRunner/blob/master/license).

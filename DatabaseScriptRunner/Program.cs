@@ -18,7 +18,7 @@ namespace DatabaseScriptRunner
             DatabaseEntities db = new DatabaseEntities(efConnectionString);
             
             SchemaChange latestChange = (from changes in db.SchemaChanges
-                                      orderby changes.MajorVersion descending
+                                      orderby changes.MajorVersion descending, changes.MinorVersion descending
                                       select changes).FirstOrDefault<SchemaChange>();
 
             if (latestChange == null)
